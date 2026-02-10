@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "kubicdivers_core:block/hellpod_controller_closed"
+    },
+    "open=true": {
+      "model": "kubicdivers_core:block/hellpod_controller_open"
+    }
+  }
+}

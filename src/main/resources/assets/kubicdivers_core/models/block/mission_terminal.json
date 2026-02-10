@@ -1,0 +1,7 @@
+ 
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "kubicdivers_core:block/mission_terminal"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "kubicdivers_core:super_destroyer",
+  "template": "kubicdivers_core:super_destroyer",
+  "y_offset": 82,
+  "biomes": "minecraft:the_void",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {}
+}

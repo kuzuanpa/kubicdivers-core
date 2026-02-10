@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "kubicdivers_core:block/hellpod_side_open"
+  }
+}

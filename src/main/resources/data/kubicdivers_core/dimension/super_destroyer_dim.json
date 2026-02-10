@@ -1,0 +1,12 @@
+{
+  "type": "kubicdivers_core:super_destroyer_type",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "layers": [
+        { "block": "minecraft:air", "height": 1 }
+      ],
+      "biome": "minecraft:the_void"
+    }
+  }
+}

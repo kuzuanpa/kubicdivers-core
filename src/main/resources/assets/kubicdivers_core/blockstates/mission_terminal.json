@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "kubicdivers_core:block/mission_terminal" }
+  }
+}
