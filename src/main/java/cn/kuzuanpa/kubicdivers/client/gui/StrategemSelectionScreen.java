@@ -1,7 +1,7 @@
 package cn.kuzuanpa.kubicdivers.client.gui;
 
 import cn.kuzuanpa.kubicdivers.KubicDiversMod;
-import cn.kuzuanpa.kubicdivers.common.mission.PlayerManager;
+import cn.kuzuanpa.kubicdivers.common.mission.MissionManager;
 import cn.kuzuanpa.kubicdivers.network.UpdateLoadoutPacket;
 import cn.kuzuanpa.kubicdivers.stratagem.common.StratagemPlayerManager;
 import cn.kuzuanpa.kubicdivers.stratagem.common.stratagem.IStratagem;
@@ -36,7 +36,7 @@ public class StrategemSelectionScreen extends Screen {
     private static final int COLOR_CYAN = 0x00FFFF;
     private static final int slotSize = 40;
     private static final int gap = 10;
-    private static final int stratagems = 4;
+    private static final int stratagems = 8;
     boolean hoveringRemoteItems = false, localPlayerReady = false;
     ItemStack hoveredEquip;
     IStratagem hoveredStratagem;
@@ -112,7 +112,7 @@ public class StrategemSelectionScreen extends Screen {
         gui.pose().pushPose();
 
         gui.pose().translate(0, -leftScrollAmount, 0);
-        List<UpdateLoadoutPacket> teammates = PlayerManager.getDisplayTeammates(localPlayer);
+        List<UpdateLoadoutPacket> teammates = MissionManager.getDisplayTeammates(localPlayer);
         int itemH = 80;
         int gap = 4;
         int slotSize = 24;
@@ -366,7 +366,7 @@ public class StrategemSelectionScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (mouseX >= localPanelX + localPanelW) {
-            int contentHeight = PlayerManager.getDisplayTeammates(localPlayer).size() * 85;
+            int contentHeight = MissionManager.getDisplayTeammates(localPlayer).size() * 85;
             double maxScroll = Math.max(0, contentHeight - remotePanelH);
 
             this.leftScrollAmount = Mth.clamp(this.leftScrollAmount - delta * 20, 0, maxScroll);

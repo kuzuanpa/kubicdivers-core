@@ -1,7 +1,7 @@
 package cn.kuzuanpa.kubicdivers.network;
 
 import cn.kuzuanpa.kubicdivers.KubicDiversMod;
-import cn.kuzuanpa.kubicdivers.common.mission.PlayerManager;
+import cn.kuzuanpa.kubicdivers.common.mission.MissionManager;
 import cn.kuzuanpa.kubicdivers.stratagem.common.stratagem.IStratagem;
 import cn.kuzuanpa.kubicdivers.stratagem.common.stratagem.StratagemManager;
 import cn.kuzuanpa.kubicdivers.stratagem.common.stratagem.types.EmptyStratagem;
@@ -43,11 +43,11 @@ public record UpdateLoadoutPacket(String playerName, ItemStack armor, ItemStack 
 
     public static void handle(UpdateLoadoutPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerManager.updateLoadout(msg.playerName, msg);
+            MissionManager.updateLoadout(msg.playerName, msg);
             ServerPlayer sender = ctx.get().getSender();
             if(sender != null){//Is server side
                 KubicDiversMod.NETWORK_CHANNEL.send(PacketDistributor.ALL.noArg(), msg);
-                PlayerManager.checkReady(sender);
+                MissionManager.checkReady(sender);
             }
         });
         ctx.get().setPacketHandled(true);

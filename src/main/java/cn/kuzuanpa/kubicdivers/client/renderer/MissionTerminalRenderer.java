@@ -34,8 +34,8 @@ public class MissionTerminalRenderer implements BlockEntityRenderer<MissionTermi
         poseStack.mulPose(new Quaternionf().rotateY(-smoothYaw));
         float cubeSize = 0.9f;
         renderHologramCube(poseStack, buffer, cubeSize);
-        if(be.missions.isEmpty())return;
-        for (MissionSummary m : be.missions.values()) {
+
+        if(!be.missions.isEmpty())for (MissionSummary m : be.missions.values()) {
             boolean isSelected = be.focusedMissionId != -1 && be.activeDetails != null && be.missions.get(be.focusedMissionId) != null && be.missions.get(be.focusedMissionId).type() == be.activeDetails.type();
             renderMissionIcon(poseStack, buffer, m, cubeSize, be.focusedMissionId == m.id(), isSelected);
         }
@@ -158,10 +158,30 @@ public class MissionTerminalRenderer implements BlockEntityRenderer<MissionTermi
         poseStack.scale(0.02f, -0.02f, 0.02f);
 
         int yOffset = 0;
-//TODO
-        font.drawInBatch(be.activeDetails.type().getDisplayName(), 0, yOffset, 0xFFFFFF, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, 15728880);
+        // 优先显示模板名称（如 "Destroy Hive"），否则回退到 type 的显示名
+        String displayName = be.activeDetails.missionType();
+        if (displayName == null || displayName.isEmpty()) {
+            displayName = be.activeDetails.type().getDisplayName();
+        } else {
+            // 将 mission_type (如 "destroy_hive") 转为可读标题 (如 "Destroy Hive")
+            displayName = formatMissionType(displayName);
+        }
+        font.drawInBatch(displayName, 0, yOffset, 0xFFFFFF, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, 15728880);
 
+        // 显示难度
+        yOffset += 12;
+        font.drawInBatch("Difficulty: " + be.activeDetails.difficulty(), 0, yOffset, 0xAAAAFF, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, 15728880);
 
         poseStack.popPose();
+    }
+
+    /** 将 snake_case 的 mission_type 转为 Title Case 显示名 */
+    private static String formatMissionType(String type) {
+        StringBuilder sb = new StringBuilder();
+        for (String word : type.split("_")) {
+            if (!sb.isEmpty()) sb.append(" ");
+            sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+        }
+        return sb.toString();
     }
 }

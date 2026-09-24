@@ -1,0 +1,38 @@
+
+{
+  "mission_type": "activate_facility",
+  "environment_type": "terminid_desert",
+  "main_structures": [
+    "kubicgen:facility/research_lab"
+  ],
+  "sub_structures": [
+    "kubicgen:facility/power_relay",
+    "kubicgen:facility/communication_array"
+  ],
+  "terrain_fillers": [
+    "kubicgen:facility/concrete_rubble",
+    "kubicgen:facility/cargo_container"
+  ],
+  "goal_definitions": [
+    {
+      "marker_id": "mission_target:terminal",
+      "handler": "kubicdivers_core:block_transform",
+      "config": {
+        "display_name": "Upload Data at Terminal",
+        "initial_block": "minecraft:lightning_rod",
+        "target_block": "minecraft:sea_lantern",
+        "marker_id": "mission_target:terminal"
+      }
+    },
+    {
+      "marker_id": "mission_target:power_switch",
+      "handler": "kubicdivers_core:block_transform",
+      "config": {
+        "display_name": "Activate Power Switch",
+        "initial_block": "minecraft:lever",
+        "target_block": "minecraft:redstone_lamp",
+        "marker_id": "mission_target:power_switch"
+      }
+    }
+  ]
+}

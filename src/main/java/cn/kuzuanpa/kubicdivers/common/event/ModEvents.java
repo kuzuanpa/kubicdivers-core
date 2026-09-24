@@ -3,6 +3,8 @@ package cn.kuzuanpa.kubicdivers.common.event;
 
 import cn.kuzuanpa.kubicdivers.common.ModEntities;
 import cn.kuzuanpa.kubicdivers.common.entity.DistractionEntity;
+import cn.kuzuanpa.kubicdivers.common.mission.MissionManager;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

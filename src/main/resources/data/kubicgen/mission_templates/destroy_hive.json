@@ -1,0 +1,47 @@
+{
+  "mission_type": "destroy_hive",
+  "environment_type": "terminid_desert",
+  "main_structures": [
+    "kubicgen:terminid/hive_center_large",
+    "kubicgen:terminid/hive_center_medium"
+  ],
+  "sub_structures": [
+    "kubicgen:terminid/spore_spewer",
+    "kubicgen:terminid/broadcast_tower"
+  ],
+  "terrain_fillers": [
+    "kubicgen:terminid/crater_small",
+    "kubicgen:terminid/rock_formation",
+    "kubicgen:terminid/egg_cluster"
+  ],
+  "goal_definitions": [
+    {
+      "marker_id": "mission_target:hive_core",
+      "handler": "kubicdivers_core:generic_destroy",
+      "config": {
+        "display_name": "Destroy Hive Core",
+        "target_block": "minecraft:spawner",
+        "marker_id": "mission_target:hive_core"
+      }
+    },
+    {
+      "marker_id": "mission_target:spore_tower",
+      "handler": "kubicdivers_core:generic_destroy",
+      "config": {
+        "display_name": "Destroy Spore Tower",
+        "target_block": "minecraft:shroomlight",
+        "marker_id": "mission_target:spore_tower"
+      }
+    },
+    {
+      "marker_id": "mission_target:broadcast_tower",
+      "handler": "kubicdivers_core:block_transform",
+      "config": {
+        "display_name": "Shut Down Broadcast Tower",
+        "initial_block": "minecraft:note_block",
+        "target_block": "minecraft:shroomlight",
+        "marker_id": "mission_target:broadcast_tower"
+      }
+    }
+  ]
+}

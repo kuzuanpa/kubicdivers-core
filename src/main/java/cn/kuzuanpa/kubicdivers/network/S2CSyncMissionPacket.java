@@ -30,8 +30,8 @@ public class S2CSyncMissionPacket {
     public static S2CSyncMissionPacket fromMission(DiveMission mission) {
         return new S2CSyncMissionPacket(
                 mission.type.getDisplayName(),
-                mission.mainGoal.stream().map(goal -> new ClientMissionCache.ObjectiveSummary(goal.getId(),goal.isCompleted(),goal.getDescription())).toList(),
-                mission.subGoal.stream().map(goal -> new ClientMissionCache.ObjectiveSummary(goal.getId(),goal.isCompleted(),goal.getDescription())).toList());
+                mission.mainGoal.stream().map(goal -> new ClientMissionCache.ObjectiveSummary(goal.getDescription(), goal.isCompleted(), goal.getProgressText())).toList(),
+                mission.subGoal.stream().map(goal -> new ClientMissionCache.ObjectiveSummary(goal.getDescription(), goal.isCompleted(), goal.getProgressText())).toList());
     }
 
     public static void encode(S2CSyncMissionPacket msg, FriendlyByteBuf buf) {
@@ -63,7 +63,8 @@ public class S2CSyncMissionPacket {
         ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientMissionCache.update(
                     msg.missionTitle,
-                    msg.mainObjectives
+                    msg.mainObjectives,
+                    msg.subObjectives
             );
         })
         );

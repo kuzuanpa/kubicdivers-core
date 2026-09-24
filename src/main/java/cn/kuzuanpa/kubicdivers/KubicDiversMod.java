@@ -1,11 +1,15 @@
 package cn.kuzuanpa.kubicdivers;
 
+import cn.kuzuanpa.kubicgen.KubicGenRegistries;
+import cn.kuzuanpa.kubicdivers.api.goal.GoalFactoryRegistry;
 import cn.kuzuanpa.kubicdivers.client.renderer.MissionTerminalRenderer;
 import cn.kuzuanpa.kubicdivers.common.*;
 import cn.kuzuanpa.kubicdivers.common.effect.ModEffects;
 import cn.kuzuanpa.kubicdivers.common.event.KubicEntityHelper;
 import cn.kuzuanpa.kubicdivers.common.mission.types.DiveMissionTypeManager;
 import cn.kuzuanpa.kubicdivers.network.*;
+import cn.kuzuanpa.kubicdivers.worldgen.goal.BlockTransformGoal;
+import cn.kuzuanpa.kubicdivers.worldgen.goal.GenericDestroyGoal;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -42,6 +46,7 @@ public class KubicDiversMod {
         ModStructures.PIECE_TYPES.register(modEventBus);
         ModEntities.ENTITIES.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
+        KubicGenRegistries.STRUCTURE_PROCESSOR_TYPES.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
@@ -95,6 +100,16 @@ public class KubicDiversMod {
                     S2CSyncMissionPacket::encode,
                     S2CSyncMissionPacket::decode,
                     S2CSyncMissionPacket::handle);
+            // 注册数据驱动的目标工厂
+            GoalFactoryRegistry.register(
+                    ResourceLocation.fromNamespaceAndPath(MOD_ID, "generic_destroy"),
+                    GenericDestroyGoal::new
+            );
+            GoalFactoryRegistry.register(
+                    ResourceLocation.fromNamespaceAndPath(MOD_ID, "block_transform"),
+                    BlockTransformGoal::new
+            );
+
             LOGGER.info("Common setup completed");
         });
     }

@@ -1,6 +1,6 @@
 package cn.kuzuanpa.kubicdivers.common.mission.goal;
 
-import cn.kuzuanpa.kubicdivers.common.mission.PlayerManager;
+import cn.kuzuanpa.kubicdivers.common.mission.MissionManager;
 import cn.kuzuanpa.kubicdivers.stratagem.common.stratagem.IStratagem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -29,7 +29,7 @@ public class RecoverLight implements IMissionGoal{
 
     @Override
     public boolean isCompleted() {
-        Level level = PlayerManager.currentMission.missionLevel;
+        Level level = MissionManager.currentMission.missionLevel;
         return level.getBlockState(pos).equals(Blocks.GLOWSTONE.defaultBlockState());
     }
 

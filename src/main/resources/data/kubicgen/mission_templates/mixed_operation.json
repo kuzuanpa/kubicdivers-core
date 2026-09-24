@@ -1,0 +1,57 @@
+
+{
+  "mission_type": "mixed_operation",
+  "environment_type": "terminid_desert",
+  "main_structures": [
+    "kubicgen:mixed/forward_base"
+  ],
+  "sub_structures": [
+    "kubicgen:mixed/signal_jammer",
+    "kubicgen:mixed/fuel_depot",
+    "kubicgen:mixed/shield_generator"
+  ],
+  "terrain_fillers": [
+    "kubicgen:mixed/crater_large",
+    "kubicgen:mixed/sandbag_wall",
+    "kubicgen:mixed/scorched_earth"
+  ],
+  "goal_definitions": [
+    {
+      "marker_id": "mission_target:command_console",
+      "handler": "kubicdivers_core:block_transform",
+      "config": {
+        "display_name": "Hack Command Console",
+        "initial_block": "minecraft:command_block",
+        "target_block": "minecraft:sea_lantern",
+        "marker_id": "mission_target:command_console"
+      }
+    },
+    {
+      "marker_id": "mission_target:signal_jammer",
+      "handler": "kubicdivers_core:generic_destroy",
+      "config": {
+        "display_name": "Destroy Signal Jammer",
+        "target_block": "minecraft:note_block",
+        "marker_id": "mission_target:signal_jammer"
+      }
+    },
+    {
+      "marker_id": "mission_target:fuel_tank",
+      "handler": "kubicdivers_core:generic_destroy",
+      "config": {
+        "display_name": "Destroy Fuel Tank",
+        "target_block": "minecraft:barrel",
+        "marker_id": "mission_target:fuel_tank"
+      }
+    },
+    {
+      "marker_id": "mission_target:shield_core",
+      "handler": "kubicdivers_core:block_transform",
+      "config": {
+        "display_name": "Disable Shield Generator",
+        "initial_block": "minecraft:beacon",
+        "marker_id": "mission_target:shield_core"
+      }
+    }
+  ]
+}

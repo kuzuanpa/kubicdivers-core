@@ -10,8 +10,9 @@ public class ClientMissionCache {
 
     public record ObjectiveSummary(String description, boolean completed, String progressText) {}
 
-    public static void update(String title, List<ObjectiveSummary> mains) {
+    public static void update(String title, List<ObjectiveSummary> mains, List<ObjectiveSummary> subs) {
         missionTitle = title;
         mainObjectives = mains;
+        subObjectives = subs;
     }
 }

@@ -4,8 +4,8 @@ import cn.kuzuanpa.kubicdivers.KubicDiversMod;
 import cn.kuzuanpa.kubicdivers.common.ModBlockEntities;
 import cn.kuzuanpa.kubicdivers.common.mission.DiveMission;
 import cn.kuzuanpa.kubicdivers.common.mission.MissionDetails;
+import cn.kuzuanpa.kubicdivers.common.mission.MissionManager;
 import cn.kuzuanpa.kubicdivers.common.mission.MissionSummary;
-import cn.kuzuanpa.kubicdivers.common.mission.PlayerManager;
 import cn.kuzuanpa.kubicdivers.common.mission.types.DiveMissionTypeManager;
 import cn.kuzuanpa.kubicdivers.event.MissionReadyEvent;
 import cn.kuzuanpa.kubicdivers.network.S2CSyncMissionPacket;
@@ -21,7 +21,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MissionTerminalBlockEntity extends BlockEntity {
     public float cursorYaw, cursorPitch;
@@ -39,7 +41,15 @@ public class MissionTerminalBlockEntity extends BlockEntity {
         cursorPitch = Math.max(-1.4f, Math.min(1.4f, pitch));
 
         difficulty = diff;
-        focusedMissionId = mid;
+
+        // 当选中的任务发生变化时，自动加载该任务的详情
+        if (focusedMissionId != mid && mid != -1 && !prepareToLaunch) {
+            focusedMissionId = mid;
+            loadMissionDetails(mid);
+        } else {
+            focusedMissionId = mid;
+        }
+
         setChanged();
 
         if (level != null && !level.isClientSide) {
@@ -49,17 +59,29 @@ public class MissionTerminalBlockEntity extends BlockEntity {
 
     public void generateMissions() {
         missions.clear();
-        //todo: just generating some random mission now
         RandomSource random = level != null ? level.random : RandomSource.create();
 
-        for (int i = 0; i < 5; i++) {
-            missions.put(i, new MissionSummary(
-                    i,
-                    random.nextInt(6),
-                    random.nextFloat(),
-                    random.nextFloat(),
-                    DiveMissionTypeManager.getFromID(0)
-            ));
+        // 从数据驱动的模板中获取可用任务类型
+        var templates = cn.kuzuanpa.kubicgen.data.MissionTemplateManager.getAllTemplates();
+        List<String> templateKeys = new ArrayList<>(templates.keySet());
+
+        if (templateKeys.isEmpty()) {
+            // 没有模板时回退到默认
+            for (int i = 0; i < 5; i++) {
+                missions.put(i, new MissionSummary(
+                        i, random.nextInt(6), random.nextFloat(), random.nextFloat(),
+                        DiveMissionTypeManager.getFromID(0), ""
+                ));
+            }
+        } else {
+            // 每个任务槽位随机选一个模板
+            for (int i = 0; i < 5; i++) {
+                String selectedKey = templateKeys.get(random.nextInt(templateKeys.size()));
+                missions.put(i, new MissionSummary(
+                        i, random.nextInt(6), random.nextFloat(), random.nextFloat(),
+                        DiveMissionTypeManager.getFromID(0), selectedKey
+                ));
+            }
         }
 
         setChanged();
@@ -88,8 +110,8 @@ public class MissionTerminalBlockEntity extends BlockEntity {
         else {
             MinecraftForge.EVENT_BUS.post(new MissionReadyEvent(level, worldPosition, activeDetails, false));
 
-            PlayerManager.currentMission = new DiveMission(activeDetails.type(), level, difficulty);
-            KubicDiversMod.NETWORK_CHANNEL.send(PacketDistributor.ALL.noArg(), S2CSyncMissionPacket.fromMission(PlayerManager.currentMission));
+            MissionManager.currentMission = new DiveMission(activeDetails.type(), level, difficulty, activeDetails.missionType());
+            KubicDiversMod.NETWORK_CHANNEL.send(PacketDistributor.ALL.noArg(), S2CSyncMissionPacket.fromMission(MissionManager.currentMission));
             prepareToLaunch = true;
             triggerLaunchSequence();
         }
@@ -105,10 +127,13 @@ public class MissionTerminalBlockEntity extends BlockEntity {
         if (!exists) return;
 
         focusedMissionId = missionId;
+        MissionSummary summary = missions.get(missionId);
 
+        // 使用选中任务的模板 ID 构建详情
         activeDetails = new MissionDetails(
                 DiveMissionTypeManager.getFromID(0),
-                difficulty
+                difficulty,
+                summary.missionType() != null ? summary.missionType() : ""
         );
 
         setChanged();
@@ -130,6 +155,7 @@ public class MissionTerminalBlockEntity extends BlockEntity {
             CompoundTag mTag = new CompoundTag();
             mTag.putInt("typeID", activeDetails.type().getID());
             mTag.putInt("diff", activeDetails.difficulty());
+            mTag.putString("missionType", activeDetails.missionType() != null ? activeDetails.missionType() : "");
             tag.put("activeDetails", mTag);
         }
         ListTag missionList = new ListTag();
@@ -140,6 +166,7 @@ public class MissionTerminalBlockEntity extends BlockEntity {
             mTag.putFloat("u", m.u());
             mTag.putFloat("v", m.v());
             mTag.putInt("type", m.type().getID());
+            mTag.putString("missionType", m.missionType() != null ? m.missionType() : "");
             missionList.add(mTag);
         }
         tag.put("missions", missionList);
@@ -159,7 +186,8 @@ public class MissionTerminalBlockEntity extends BlockEntity {
             CompoundTag mTag = tag.getCompound("activeDetails");
             activeDetails = new MissionDetails(
                     DiveMissionTypeManager.getFromID(mTag.getInt("typeID")),
-                    mTag.getInt("diff"));
+                    mTag.getInt("diff"),
+                    mTag.contains("missionType") ? mTag.getString("missionType") : "");
 
         }else activeDetails = null;
         if (tag.contains("missions", Tag.TAG_LIST)) {
@@ -171,7 +199,8 @@ public class MissionTerminalBlockEntity extends BlockEntity {
                         mTag.getInt("face"),
                         mTag.getFloat("u"),
                         mTag.getFloat("v"),
-                        DiveMissionTypeManager.getFromID(mTag.getInt("type"))
+                        DiveMissionTypeManager.getFromID(mTag.getInt("type")),
+                        mTag.contains("missionType") ? mTag.getString("missionType") : ""
                 ));
             }
         }

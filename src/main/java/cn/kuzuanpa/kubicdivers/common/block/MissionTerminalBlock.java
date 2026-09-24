@@ -30,9 +30,8 @@ public class MissionTerminalBlock extends Block implements EntityBlock {
         BlockEntity be = level.getBlockEntity(pos);
         if (!(be instanceof MissionTerminalBlockEntity terminal))return InteractionResult.PASS;
 
-        if (terminal.missions.isEmpty()) {
-            terminal.generateMissions();
-        }
+        // 每次使用终端时刷新任务列表，确保获取最新的数据驱动模板
+        terminal.generateMissions();
         KubicDiversMod.NETWORK_CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
                 new S2COpenMissionScreen(pos)
